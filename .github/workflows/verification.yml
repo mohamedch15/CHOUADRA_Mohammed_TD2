@@ -1,0 +1,30 @@
+name: Vérification
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: Java 21 et Maven
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupération du dépôt
+        uses: actions/checkout@v7
+
+      - name: Installation de Java 21
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Compilation et tests (common, internationalizer, localizer)
+        run: ./mvnw --batch-mode --no-transfer-progress clean verify
+
+      - name: Compilation du projet de demonstration (demo-project)
+        run: ./mvnw --batch-mode --no-transfer-progress -f demo-project/pom.xml clean compile
